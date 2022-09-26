@@ -37,6 +37,9 @@ function Item(props) {
     loadNFT();
   }, []);
 
+
+  
+
   return (
     <div className="disGrid-item">
       <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
