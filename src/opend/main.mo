@@ -50,29 +50,36 @@ actor OpenD {
     };
 
     public shared(msg) func listItem(id :Principal, price :Nat) : async Text{
-        var item : NFTActorClass.NFT = switch(mapOfNFTs.get(id)){
-            case null return "NFT does not exists";
-            case (?result) result;
+        var item : NFTActorClass.NFT = switch (mapOfNFTs.get(id)) {
+        case null return "NFT does not exist.";
+        case (?result) result;
+      };
+
+      let owner = await item.getOwner();
+      if (Principal.equal(owner, msg.caller)) {
+        let newListing : Listing = {
+          itemOwner = owner;
+          itemPrice = price;
         };
-
-        let owner =await item.getOwner();
-
-        if(Principal.equal(owner,msg.caller)){
-            let newListing: Listing ={
-                itemOwner =owner;
-                itemPrice =price;
-            };
-            mapOfListings.put(id,newListing);
-            return "success";
-        }
-        else{
-            return "Baap ka maal samjha h kya jo bechne nikla h"
-        }
+        mapOfListings.put(id, newListing);
+        return "Success";
+      } else {
+        return "You don't own the NFT."
+      }
         
     };
 
     public query func getOpenDCanisterID() : async Principal{
         return Principal.fromActor(OpenD);
+    };
+
+    public query func isListed(id : Principal) : async Bool{
+        if(mapOfListings.get(id)== null){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
 
